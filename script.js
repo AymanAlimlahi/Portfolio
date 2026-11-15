@@ -183,9 +183,9 @@
   // Copy-to-clipboard with a fallback for older browsers and file:// previews.
   const toast = $('#toast');
   let toastTimeout;
-  const talkLink = $('.header-contact');
+  const talkLinks = $$('.header-contact, .about-left a.text-link[href^="mailto:"]');
   let mailFallbackTimer;
-  talkLink?.addEventListener('click', () => {
+  talkLinks.forEach(talkLink => talkLink.addEventListener('click', () => {
     clearTimeout(mailFallbackTimer);
     mailFallbackTimer = setTimeout(() => {
       const composeUrl = new URL('https://mail.google.com/mail/');
@@ -210,7 +210,7 @@
         toast.style.pointerEvents = 'none';
       }, 8000);
     }, 1200);
-  });
+  }));
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') clearTimeout(mailFallbackTimer);
   });
