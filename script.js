@@ -183,7 +183,40 @@
   // Copy-to-clipboard with a fallback for older browsers and file:// previews.
   const toast = $('#toast');
   let toastTimeout;
+  const talkLink = $('.header-contact');
+  let mailFallbackTimer;
+  talkLink?.addEventListener('click', () => {
+    clearTimeout(mailFallbackTimer);
+    mailFallbackTimer = setTimeout(() => {
+      const composeUrl = new URL('https://mail.google.com/mail/');
+      composeUrl.searchParams.set('view', 'cm');
+      composeUrl.searchParams.set('fs', '1');
+      composeUrl.searchParams.set('to', 'alimlahiaymane0@gmail.com');
+      composeUrl.searchParams.set('su', "Let's Work Together – Portfolio Inquiry");
+      composeUrl.searchParams.set('body', 'Hello Ayman, I visited your portfolio and would like to discuss an opportunity with you.');
+      const gmailLink = document.createElement('a');
+      gmailLink.href = composeUrl.toString();
+      gmailLink.target = '_blank';
+      gmailLink.rel = 'noopener noreferrer';
+      gmailLink.textContent = 'Open Gmail instead';
+      gmailLink.style.color = 'inherit';
+      gmailLink.style.textDecoration = 'underline';
+      toast.replaceChildren(document.createTextNode('No email app opened? '), gmailLink);
+      toast.style.pointerEvents = 'auto';
+      toast.classList.add('visible');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('visible');
+        toast.style.pointerEvents = 'none';
+      }, 8000);
+    }, 1200);
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') clearTimeout(mailFallbackTimer);
+  });
   $('#copy-email')?.addEventListener('click', async () => {
+    clearTimeout(mailFallbackTimer);
+    toast.style.pointerEvents = 'none';
     const email = 'alimlahiaymane0@gmail.com';
     try {
       if (navigator.clipboard?.writeText) {
